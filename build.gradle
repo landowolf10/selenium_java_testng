@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation group: 'org.testng', name: 'testng', version: '7.8.0'
+    implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.16.1'
+    implementation group: 'com.github.stephenc.monte', name: 'monte-screen-recorder', version: '0.7.7.0'
+    implementation group: 'com.aventstack', name: 'extentreports-testng-adapter', version: '1.0.3'
+    implementation group: 'io.github.bonigarcia', name: 'webdrivermanager', version: '5.7.0'
+    implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+}
+
+test {
+    useTestNG() {
+        testLogging.showStandardStreams = true
+        useDefaultListeners = true
+        parallel = true
+        if (project.hasProperty('login_test')) { suites './src/test/resources/suites/login_test.xml' }
+        //if (project.hasProperty('suite2')) { suites './src/test/suite2.xml' }
+    }
+}

@@ -1,0 +1,31 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: circleci/openjdk:17-buster-node-browsers
+    steps:
+      - checkout
+      - run:
+          name: Run Selenium Tests
+          command: |
+            chmod +x gradlew
+             ./gradlew clean test -Plogin_test
+      - run:
+          name: Modify report CSS
+          command: |
+            sed -i 's#http://cdn.jsdelivr.net/gh/extent-framework/extent-github-cdn@ff53917fbbdb5ef820abbbe4d199a6942dc771ff/v3html/css/extent.css#extent.css#g' /home/circleci/project/test-output/HtmlReport/ExtentHtml.html
+            sed -i 's#http://cdn.jsdelivr.net/gh/extent-framework/extent-github-cdn@ff53917fbbdb5ef820abbbe4d199a6942dc771ff/v3html/js/extent.js#extent.js#g' /home/circleci/project/test-output/HtmlReport/ExtentHtml.html
+            cd /home/circleci/project/test-output/HtmlReport
+            cat ExtentHtml.html
+            ls
+      - store_artifacts:
+          path: test-output/HtmlReport
+          destination: extent-reports
+      - store_test_results:
+          path: test-output/HtmlReport
+
+workflows:
+  version: 2
+  build-test:
+    jobs:
+      - build
