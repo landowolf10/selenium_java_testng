@@ -8,11 +8,9 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.Duration;
 
 public class SetUp {
     WebDriver driver;
@@ -27,7 +25,7 @@ public class SetUp {
             if (isSeleniumGridEnabled)
                 driver = createRemoteDriver(browser);
             else
-                driver = createDriver(browser);
+                driver = createLocalDriver(browser);
 
         driverInstanceExists = true;
         driverInstance = driver;
@@ -37,8 +35,8 @@ public class SetUp {
 
     private WebDriver createRemoteDriver(String browser) {
         Capabilities capabilities = null;
-
-        System.out.println("OS: " + os);
+        String ip = System.getenv("GRID_HUB_HOST");
+        String gridHubHost = "http://" + ip + ":4444/wd/hub";
 
         if (browser.equalsIgnoreCase("chrome")) {
             WebDriverManager.chromedriver().setup();
@@ -54,13 +52,13 @@ public class SetUp {
 
         try {
             assert capabilities != null;
-            return new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), capabilities);
+            return new RemoteWebDriver(new URL(gridHubHost), capabilities);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private WebDriver createDriver(String browser)
+    private WebDriver createLocalDriver(String browser)
     {
         System.out.println("OS: " + os);
 
