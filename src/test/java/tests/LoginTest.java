@@ -14,7 +14,7 @@ public class LoginTest {
     @Parameters("browser")
     public void setUp(String browser) {
         SetUp setUp = new SetUp();
-        driver = setUp.getDriver(browser, true);
+        driver = setUp.getDriver(browser, false);
         loginPage = new LoginPage(driver);
         loginPage.navigateToSauceLab();
     }
