@@ -14,7 +14,7 @@ public class LoginTest {
     @Parameters("browser")
     public void setUp(String browser) {
         SetUp setUp = new SetUp();
-        driver = setUp.getDriver(browser, false);
+        driver = setUp.getDriver(browser, Boolean.parseBoolean(System.getenv("SELENIUM_GRID_ENABLED")));
         loginPage = new LoginPage(driver);
         loginPage.navigateToSauceLab();
     }

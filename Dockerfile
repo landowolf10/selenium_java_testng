@@ -22,6 +22,7 @@ RUN chmod +x gradlew
 
 # Define a default value for the test runner
 ARG TEST_RUNNER="login_test"
+ARG SELENIUM_GRID_ENABLED="false"
 ARG GRID_HUB_HOST
 
 # Run the test runner with gradlew
