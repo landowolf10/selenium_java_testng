@@ -13,6 +13,7 @@ public class LoginTest {
     @BeforeTest
     @Parameters("browser")
     public void setUp(String browser) {
+        System.out.println("SELENIUM_GRID_ENABLED: " + System.getenv("SELENIUM_GRID_ENABLED"));
         SetUp setUp = new SetUp();
         driver = setUp.getDriver(browser, Boolean.parseBoolean(System.getenv("SELENIUM_GRID_ENABLED")));
         loginPage = new LoginPage(driver);

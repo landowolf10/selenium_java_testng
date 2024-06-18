@@ -39,3 +39,5 @@ services:
       - chrome
     environment:
       - TEST_RUNNER=${TEST_RUNNER}
+      - SELENIUM_GRID_ENABLED=${SELENIUM_GRID_ENABLED}
+      - GRID_HUB_HOST=${GRID_HUB_HOST}

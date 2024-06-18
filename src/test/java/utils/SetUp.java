@@ -16,7 +16,6 @@ public class SetUp {
     WebDriver driver;
     private static boolean driverInstanceExists = false;
     private static WebDriver driverInstance = null;
-    private final String os = System.getProperty("os.name");
 
     public WebDriver getDriver(String browser, boolean isSeleniumGridEnabled) {
         if (driverInstanceExists)
@@ -58,15 +57,16 @@ public class SetUp {
         }
     }
 
-    private WebDriver createLocalDriver(String browser)
-    {
-        System.out.println("OS: " + os);
-
+    private WebDriver createLocalDriver(String browser) {
         if (browser.equalsIgnoreCase("chrome")) {
             WebDriverManager.chromedriver().setup();
             ChromeOptions chromeOptions = new ChromeOptions();
             //chromeOptions.addArguments("--remote-allow-origins=*");
             chromeOptions.addArguments("--headless");
+            chromeOptions.addArguments("--no-sandbox");
+            chromeOptions.addArguments("--disable-dev-shm-usage");
+            chromeOptions.addArguments("--disable-gpu");
+            chromeOptions.addArguments("--window-size=1920,1080");
             driver = new ChromeDriver(chromeOptions);
         }
         else if (browser.equalsIgnoreCase("firefox")) {
@@ -84,8 +84,7 @@ public class SetUp {
     public static void quitDriver() {
         WebDriver currentDriver;
 
-        if (driverInstanceExists)
-        {
+        if (driverInstanceExists) {
             currentDriver = driverInstance;
             currentDriver.quit();
         }
