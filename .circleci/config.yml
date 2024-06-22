@@ -9,7 +9,7 @@ jobs:
           name: Run Selenium Tests
           command: |
             chmod +x gradlew
-             ./gradlew clean test -Plogin_test
+             ./gradlew clean test -Pall_tests
 
 workflows:
   version: 2
