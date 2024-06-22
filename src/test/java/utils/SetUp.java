@@ -63,10 +63,10 @@ public class SetUp {
             ChromeOptions chromeOptions = new ChromeOptions();
             //chromeOptions.addArguments("--remote-allow-origins=*");
             chromeOptions.addArguments("--headless");
-            chromeOptions.addArguments("--no-sandbox");
+            /*chromeOptions.addArguments("--no-sandbox");
             chromeOptions.addArguments("--disable-dev-shm-usage");
             chromeOptions.addArguments("--disable-gpu");
-            chromeOptions.addArguments("--window-size=1920,1080");
+            chromeOptions.addArguments("--window-size=1920,1080");*/
             driver = new ChromeDriver(chromeOptions);
         }
         else if (browser.equalsIgnoreCase("firefox")) {

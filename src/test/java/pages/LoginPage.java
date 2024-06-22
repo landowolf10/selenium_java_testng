@@ -1,7 +1,6 @@
 package pages;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import utils.BasePage;
@@ -50,7 +49,6 @@ public class LoginPage extends BasePage {
 
         return presentElements;
     }
-
 
     public String getErrorMessageText() {
         return getElementText(By.xpath(errorMessage), 10);

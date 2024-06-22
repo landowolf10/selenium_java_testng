@@ -1,36 +1,30 @@
 package tests;
 
-import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 import org.testng.annotations.*;
 import pages.LoginPage;
 import utils.SetUp;
 
 public class LoginTest {
-    WebDriver driver;
+    CommonTest commonTest = new CommonTest();
     LoginPage loginPage;
+    String selectedBrowser;
 
-    @BeforeTest
+    @BeforeMethod
     @Parameters("browser")
     public void setUp(String browser) {
-        System.out.println("SELENIUM_GRID_ENABLED: " + System.getenv("SELENIUM_GRID_ENABLED"));
-        SetUp setUp = new SetUp();
-        driver = setUp.getDriver(browser, Boolean.parseBoolean(System.getenv("SELENIUM_GRID_ENABLED")));
-        loginPage = new LoginPage(driver);
-        loginPage.navigateToSauceLab();
+        selectedBrowser = browser;
+        loginPage = commonTest.getLoginPage(browser);
+        commonTest.navigate(browser);
     }
 
     @Test
     public void successfulLoginTest() {
-        loginPage.writeCredentials("standard_user", "secret_sauce");
-        loginPage.clickLoginButton();
-        Assert.assertTrue(loginPage.getValidLoginElements().get("cart_icon").isDisplayed());
-        Assert.assertTrue(loginPage.getValidLoginElements().get("drop_down").isDisplayed());
+        commonTest.successfulLogin(selectedBrowser);
     }
 
     @Test(dependsOnMethods = "successfulLoginTest")
     public void invalidLoginTest() {
-        loginPage.navigateToSauceLab();
         loginPage.writeCredentials("standard_use", "secret_sauce");
         loginPage.clickLoginButton();
         Assert.assertTrue(loginPage.getInvalidLoginElements().get("login_button"));

@@ -27,6 +27,7 @@ test {
         useDefaultListeners = true
         parallel = true
         if (project.hasProperty('login_test')) { suites './src/test/resources/suites/login_test.xml' }
-        //if (project.hasProperty('suite2')) { suites './src/test/suite2.xml' }
+        if (project.hasProperty('checkout_test')) { suites './src/test/resources/suites/checkout_test.xml' }
+        if (project.hasProperty('all_tests')) { suites './src/test/resources/suites/all_tests.xml' }
     }
 }
