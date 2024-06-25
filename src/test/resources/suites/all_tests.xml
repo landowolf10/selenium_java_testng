@@ -3,25 +3,25 @@
     <test name="Login Chrome test">
         <parameter name="browser" value="chrome"/>
         <classes>
-            <class name="tests.LoginTest"/>
+            <class name="com.lando.tests.LoginTest"/>
         </classes>
     </test>
     <test name="Login Firefox test">
         <parameter name="browser" value="firefox"/>
         <classes>
-            <class name="tests.LoginTest"/>
+            <class name="com.lando.tests.LoginTest"/>
         </classes>
     </test>
     <test name="Checkout Chrome test">
         <parameter name="browser" value="chrome"/>
         <classes>
-            <class name="tests.CheckoutTest"/>
+            <class name="com.lando.tests.CheckoutTest"/>
         </classes>
     </test>
     <test name="Checkout Firefox test">
         <parameter name="browser" value="firefox"/>
         <classes>
-            <class name="tests.CheckoutTest"/>
+            <class name="com.lando.tests.CheckoutTest"/>
         </classes>
     </test>
 </suite>

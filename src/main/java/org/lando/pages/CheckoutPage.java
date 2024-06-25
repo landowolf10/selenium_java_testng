@@ -1,15 +1,14 @@
-package pages;
+package org.lando.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
-import utils.BasePage;
+import org.lando.utils.BasePage;
 import java.util.HashMap;
 
-import static locators.CheckoutLocators.*;
-import static locators.CheckoutLocators.finishButton;
-import static locators.DashboardLocators.*;
-import static pages.DashboardPage.getSelectedItemAccess;
+import static org.lando.locators.CheckoutLocators.*;
+import static org.lando.locators.CheckoutLocators.finishButton;
+import static org.lando.locators.DashboardLocators.*;
 
 public class CheckoutPage extends BasePage {
     public CheckoutPage(WebDriver driver) {
@@ -50,13 +49,13 @@ public class CheckoutPage extends BasePage {
     public String getItemsSum() {
         float subTotal = 0;
 
-        for (Float selectedItemPrice : getSelectedItemAccess()) subTotal += selectedItemPrice;
+        for (Float selectedItemPrice : DashboardPage.getSelectedItemAccess()) subTotal += selectedItemPrice;
 
         return "Item total: $" + subTotal;
     }
 
     public void clickFinishButton() {
-        getSelectedItemAccess().clear();
+        DashboardPage.getSelectedItemAccess().clear();
         clickElement(By.xpath(finishButton), 10);
     }
 }

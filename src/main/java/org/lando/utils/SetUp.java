@@ -1,4 +1,4 @@
-package utils;
+package org.lando.utils;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.Capabilities;

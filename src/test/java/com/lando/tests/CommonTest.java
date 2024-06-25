@@ -1,9 +1,9 @@
-package tests;
+package com.lando.tests;
 
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
-import pages.LoginPage;
-import utils.SetUp;
+import org.lando.pages.LoginPage;
+import org.lando.utils.SetUp;
 
 public class CommonTest {
     WebDriver driver;

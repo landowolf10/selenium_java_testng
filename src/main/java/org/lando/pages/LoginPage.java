@@ -1,17 +1,16 @@
-package pages;
+package org.lando.pages;
 
+import org.lando.locators.DashboardLocators;
+import org.lando.utils.BasePage;
+import org.lando.utils.ConstantData;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import utils.BasePage;
-import utils.ConstantData;
 
 import java.util.HashMap;
 
-import static locators.DashboardLocators.cartIcon;
-import static locators.DashboardLocators.sortDropDown;
-import static locators.LoginLocators.*;
-import static locators.LoginLocators.errorMessage;
+import static org.lando.locators.LoginLocators.*;
+import static org.lando.locators.LoginLocators.errorMessage;
 
 public class LoginPage extends BasePage {
     public LoginPage(WebDriver driver) {
@@ -34,8 +33,8 @@ public class LoginPage extends BasePage {
     public HashMap<String, WebElement> getValidLoginElements() {
         HashMap<String, WebElement> presentElements = new HashMap<>();
 
-        presentElements.put("cart_icon", getElementBy(By.xpath(cartIcon), 10));
-        presentElements.put("drop_down", getElementBy(By.xpath(sortDropDown), 10));
+        presentElements.put("cart_icon", getElementBy(By.xpath(DashboardLocators.cartIcon), 10));
+        presentElements.put("drop_down", getElementBy(By.xpath(DashboardLocators.sortDropDown), 10));
 
         return presentElements;
     }

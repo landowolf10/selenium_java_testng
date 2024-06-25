@@ -1,4 +1,4 @@
-package locators;
+package org.lando.locators;
 
 public class CheckoutLocators
 {

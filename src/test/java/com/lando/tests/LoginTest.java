@@ -1,9 +1,9 @@
-package tests;
+package com.lando.tests;
 
 import org.testng.Assert;
 import org.testng.annotations.*;
-import pages.LoginPage;
-import utils.SetUp;
+import org.lando.pages.LoginPage;
+import org.lando.utils.SetUp;
 
 public class LoginTest {
     CommonTest commonTest = new CommonTest();

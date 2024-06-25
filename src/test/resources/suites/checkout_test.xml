@@ -3,13 +3,13 @@
     <test name="Chrome Test 1">
         <parameter name="browser" value="chrome"/>
         <classes>
-            <class name="tests.CheckoutTest"/>
+            <class name="com.lando.tests.CheckoutTest"/>
         </classes>
     </test>
     <test name="Firefox Test 1">
         <parameter name="browser" value="firefox"/>
         <classes>
-            <class name="tests.CheckoutTest"/>
+            <class name="com.lando.tests.CheckoutTest"/>
         </classes>
     </test>
 </suite>
