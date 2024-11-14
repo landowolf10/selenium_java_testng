@@ -16,6 +16,8 @@ public class CommonTest {
         return setUp.getDriver(browser, Boolean.parseBoolean(System.getenv("SELENIUM_GRID_ENABLED")));
     }
 
+
+
     public LoginPage getLoginPage(String browser) {
         driver = setUp(browser);
         loginPage = new LoginPage(driver);
