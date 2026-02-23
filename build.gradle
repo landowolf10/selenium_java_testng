@@ -5,8 +5,15 @@ plugins {
 group = 'org.example'
 version = '1.0-SNAPSHOT'
 
-sourceCompatibility = 17
-targetCompatibility = 17
+def allureVersion = "2.29.1"
+def aspectJVersion = "1.9.20.1"
+
+configurations {
+    agent {
+        canBeResolved = true
+        canBeConsumed = true
+    }
+}
 
 repositories {
     mavenCentral()
@@ -19,15 +26,45 @@ dependencies {
     implementation group: 'com.aventstack', name: 'extentreports-testng-adapter', version: '1.0.3'
     implementation group: 'io.github.bonigarcia', name: 'webdrivermanager', version: '5.7.0'
     implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+
+    testImplementation platform("io.qameta.allure:allure-bom:$allureVersion")
+    testImplementation "io.qameta.allure:allure-testng"
+
+    agent "org.aspectj:aspectjweaver:$aspectJVersion"
+
+    implementation "com.aventstack:extentreports:5.1.2"
 }
 
 test {
     useTestNG() {
         testLogging.showStandardStreams = true
         useDefaultListeners = true
-        parallel = true
+
         if (project.hasProperty('login_test')) { suites './src/test/resources/suites/login_test.xml' }
         if (project.hasProperty('checkout_test')) { suites './src/test/resources/suites/checkout_test.xml' }
         if (project.hasProperty('all_tests')) { suites './src/test/resources/suites/all_tests.xml' }
     }
+
+    testLogging {
+        events "started", "passed", "skipped", "failed"
+    }
+}
+
+tasks.register('allureReport', Exec) {
+    group = "verification"
+    description = "Genera el reporte de Allure"
+
+    dependsOn test
+
+    doFirst {
+        file("$buildDir/allure-results").mkdirs()
+    }
+
+    inputs.dir("$buildDir/allure-results")
+    outputs.dir("$buildDir/reports/allure-report")
+
+    commandLine "allure", "generate",
+            "$buildDir/allure-results",
+            "-o", "$buildDir/reports/allure-report",
+            "--clean"
 }

@@ -11,7 +11,8 @@ import java.util.List;
 import static org.lando.locators.DashboardLocators.*;
 
 public class DashboardPage extends BasePage {
-    static List<Float> selectedItemPrices = new ArrayList<>();
+    private final ThreadLocal<List<Float>> selectedItemPrices =
+            ThreadLocal.withInitial(ArrayList::new);
 
     public DashboardPage(WebDriver driver) {
         super(driver);
@@ -22,36 +23,40 @@ public class DashboardPage extends BasePage {
     }
 
     public void addProduct() {
-        List<WebElement> webElements = getAllElementsBy(By.xpath(addToCartButton));
+        List<WebElement> addToCartButtons = getAllElementsBy(By.xpath(addToCartButton));
         List<Float> prices = getPrices();
 
         for (int i = 0; i < prices.size(); i++) {
             if (prices.get(i) < 20)
             {
-                clickElementFromList(webElements.get(i));
+                clickElementFromList(addToCartButtons.get(i));
+                selectedItemPrices.get().add(prices.get(i));
                 prices.remove(i);
-                webElements.remove(i);
-                selectedItemPrices.add(prices.get(i));
-
+                addToCartButtons.remove(i);
                 break;
             }
         }
     }
 
     private List<Float> getPrices() {
-        int elements = getAllElementsBy(By.xpath(productPrice)).size();
+        List<WebElement> priceElements = getAllElementsBy(By.xpath(productPrice));
         List<Float> prices = new ArrayList<>();
 
-        for (int i = 0; i < elements; i++)
-            prices.add(Float.valueOf(getAllElementsBy(By.xpath(productPrice)).
-                    get(i).getText().substring(1)));
+        for (WebElement element : priceElements) {
+            prices.add(Float.parseFloat(element.getText().substring(1)));
+        }
 
         return prices;
     }
 
-    public static List<Float> getSelectedItemAccess() {
-        System.out.println("selectedItemPrices: " + selectedItemPrices);
+    public List<Float> getSelectedItemPrices() {
+        System.out.println("selectedItemPrices: " + selectedItemPrices.get());
 
-        return selectedItemPrices;
+        return selectedItemPrices.get();
+    }
+
+    public void clearSelectedItems() {
+        selectedItemPrices.get().clear();
+        selectedItemPrices.remove();
     }
 }

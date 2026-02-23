@@ -11,17 +11,20 @@ import static org.lando.locators.CheckoutLocators.finishButton;
 import static org.lando.locators.DashboardLocators.*;
 
 public class CheckoutPage extends BasePage {
-    public CheckoutPage(WebDriver driver) {
+    private final DashboardPage dashboardPage;
+
+    public CheckoutPage(WebDriver driver, DashboardPage dashboardPage) {
         super(driver);
+        this.dashboardPage = dashboardPage;
     }
 
     public void proceedWithCheckout() {
         clickElement(By.xpath(cartIcon), 10);
-        clickElement(By.xpath(checkoutButton), 10);
-        writeText(By.xpath(txtFirstName), "Orlando", 10);
-        writeText(By.xpath(txtLastName), "Avila", 10);
-        writeText(By.xpath(txtZipCode), "40880", 10);
-        clickElement(By.xpath(continueButton), 10);
+        clickElement(By.id(checkoutButton), 10);
+        writeText(By.id(txtFirstName), "Orlando", 10);
+        writeText(By.id(txtLastName), "Avila", 10);
+        writeText(By.id(txtZipCode), "40880", 10);
+        clickElement(By.id(continueButton), 10);
     }
 
     public String getSubtotal() {
@@ -49,13 +52,15 @@ public class CheckoutPage extends BasePage {
     public String getItemsSum() {
         float subTotal = 0;
 
-        for (Float selectedItemPrice : DashboardPage.getSelectedItemAccess()) subTotal += selectedItemPrice;
+        for (Float selectedItemPrice : dashboardPage.getSelectedItemPrices()) subTotal += selectedItemPrice;
+
+        System.out.println("Subtotal: " + subTotal);
 
         return "Item total: $" + subTotal;
     }
 
     public void clickFinishButton() {
-        DashboardPage.getSelectedItemAccess().clear();
-        clickElement(By.xpath(finishButton), 10);
+        dashboardPage.clearSelectedItems();
+        clickElement(By.id(finishButton), 10);
     }
 }

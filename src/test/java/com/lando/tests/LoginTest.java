@@ -6,24 +6,25 @@ import org.lando.pages.LoginPage;
 import org.lando.utils.SetUp;
 
 public class LoginTest {
-    CommonTest commonTest = new CommonTest();
+    CommonTest commonTest;
     LoginPage loginPage;
-    String selectedBrowser;
 
     @BeforeMethod
     @Parameters("browser")
     public void setUp(String browser) {
-        selectedBrowser = browser;
-        loginPage = commonTest.getLoginPage(browser);
-        commonTest.navigate(browser);
+        //System.out.println("Thread ID: " + Thread.currentThread().getId());
+
+        commonTest = new CommonTest();
+        loginPage = commonTest.init(browser);
+        commonTest.navigate();
     }
 
     @Test
     public void successfulLoginTest() {
-        commonTest.successfulLogin(selectedBrowser);
+        commonTest.successfulLogin();
     }
 
-    @Test(dependsOnMethods = "successfulLoginTest")
+    @Test()
     public void invalidLoginTest() {
         loginPage.writeCredentials("standard_use", "secret_sauce");
         loginPage.clickLoginButton();
@@ -33,7 +34,7 @@ public class LoginTest {
                 "any user in this service");
     }
 
-    @AfterClass
+    @AfterMethod
     public void tearDown() {
         SetUp.quitDriver();
     }

@@ -1,44 +1,65 @@
-# Use a base image with Amazon Corretto 17
-FROM amazoncorretto:17
+FROM amazoncorretto:21
 
-# Install necessary Linux packages using yum
+# Install necessary Linux packages
 RUN yum update -y && \
-    yum install -y curl jq p7zip p7zip-plugins unzip bzip2 wget gnupg tar && \
-    yum install -y xorg-x11-server-Xvfb mesa-libGL mesa-libGLES dbus-glib dbus-glib-devel fontconfig && \
+    yum install -y \
+        curl jq unzip bzip2 wget gnupg tar xz \
+        xorg-x11-server-Xvfb \
+        mesa-libGL mesa-libGLES \
+        dbus-glib dbus-glib-devel \
+        fontconfig \
+        p7zip p7zip-plugins && \
     yum clean all
 
 # Install Gradle
-RUN curl -sL https://services.gradle.org/distributions/gradle-8.0-bin.zip -o gradle.zip && \
-    unzip gradle.zip && \
-    mv gradle-8.0 /opt/gradle && \
+RUN wget -q https://services.gradle.org/distributions/gradle-8.2-bin.zip -O gradle.zip && \
+    unzip -q gradle.zip && \
+    mv gradle-8.2 /opt/gradle && \
     rm gradle.zip && \
     ln -s /opt/gradle/bin/gradle /usr/bin/gradle
 
-# Download and install Google Chrome
-RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm && \
+ENV GRADLE_HOME=/opt/gradle
+ENV PATH=$GRADLE_HOME/bin:$PATH
+ENV GRADLE_USER_HOME=/root/.gradle
+
+# Install Google Chrome
+RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm && \
     yum localinstall -y google-chrome-stable_current_x86_64.rpm && \
     rm google-chrome-stable_current_x86_64.rpm && \
     yum clean all
 
-# Download and install Firefox
-RUN wget -O /tmp/firefox.tar.bz2 "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US" && \
-    tar -xjf /tmp/firefox.tar.bz2 -C /opt/ && \
+# Install Firefox (latest, con reintentos por inestabilidad de red)
+RUN FIREFOX_VERSION=$(curl -s "https://product-details.mozilla.org/1.0/firefox_versions.json" | \
+        grep -o '"LATEST_FIREFOX_VERSION": "[^"]*"' | grep -o '[0-9.]*') && \
+    echo "Installing Firefox $FIREFOX_VERSION" && \
+    for i in 1 2 3 4 5; do \
+        wget -c --tries=3 --waitretry=10 --timeout=60 \
+            -O /tmp/firefox.tar.xz \
+            "https://releases.mozilla.org/pub/firefox/releases/${FIREFOX_VERSION}/linux-x86_64/en-US/firefox-${FIREFOX_VERSION}.tar.xz" \
+        && break \
+        || echo "Intento $i fallido, reintentando..." && sleep 10; \
+    done && \
+    tar -xJf /tmp/firefox.tar.xz -C /opt/ && \
     ln -s /opt/firefox/firefox /usr/bin/firefox && \
-    rm /tmp/firefox.tar.bz2
+    rm /tmp/firefox.tar.xz
 
-# Set up your working directory
+# Verify installations
+RUN java -version && \
+    gradle -version && \
+    google-chrome --version && \
+    firefox --version
+
 WORKDIR /usr/src/app
 
-# Copy your project files
 COPY . .
 
-# Set permissions
 RUN chmod +x gradlew
 
-# Define a default value for the test runner
 ARG TEST_RUNNER="all_tests"
 ARG SELENIUM_GRID_ENABLED="false"
 ARG GRID_HUB_HOST
 
-# Run the test runner with gradlew
-CMD ["sh", "-c", "./gradlew clean test -P\"$TEST_RUNNER\""]
+ENV SELENIUM_GRID_ENABLED=${SELENIUM_GRID_ENABLED}
+ENV GRID_HUB_HOST=${GRID_HUB_HOST}
+
+CMD ["sh", "-c", "./gradlew clean test -P${TEST_RUNNER}"]

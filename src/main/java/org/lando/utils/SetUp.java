@@ -13,23 +13,24 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class SetUp {
-    WebDriver driver;
-    private static boolean driverInstanceExists = false;
-    private static WebDriver driverInstance = null;
+
+    private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
 
     public WebDriver getDriver(String browser, boolean isSeleniumGridEnabled) {
-        if (driverInstanceExists)
-            driver = driverInstance;
-        else
+
+        if (driver.get() == null) {
+
             if (isSeleniumGridEnabled)
-                driver = createRemoteDriver(browser);
+                driver.set(createRemoteDriver(browser));
             else
-                driver = createLocalDriver(browser);
+                driver.set(createLocalDriver(browser));
+        }
 
-        driverInstanceExists = true;
-        driverInstance = driver;
+        return driver.get();
+    }
 
-        return driver;
+    public static WebDriver getCurrentDriver() {
+        return driver.get();
     }
 
     private WebDriver createRemoteDriver(String browser) {
@@ -38,58 +39,52 @@ public class SetUp {
         String gridHubHost = "http://" + ip + ":4444/wd/hub";
 
         if (browser.equalsIgnoreCase("chrome")) {
-            WebDriverManager.chromedriver().setup();
-            //chromeOptions.addArguments("--remote-allow-origins=*");
-            //chromeOptions.addArguments("--headless=new");
-            capabilities = new ChromeOptions();
+            ChromeOptions options = new ChromeOptions();
+            capabilities = options;
         }
         else if (browser.equalsIgnoreCase("firefox")) {
-            WebDriverManager.firefoxdriver().setup();
-            //firefoxOptions.addArguments("--headless");
-            capabilities = new FirefoxOptions();
+            FirefoxOptions options = new FirefoxOptions();
+            capabilities = options;
         }
 
         try {
-            assert capabilities != null;
             return new RemoteWebDriver(new URL(gridHubHost), capabilities);
         } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Grid URL malformed", e);
         }
     }
 
     private WebDriver createLocalDriver(String browser) {
+
         if (browser.equalsIgnoreCase("chrome")) {
             WebDriverManager.chromedriver().setup();
-            ChromeOptions chromeOptions = new ChromeOptions();
-            //chromeOptions.addArguments("--remote-allow-origins=*");
-            chromeOptions.addArguments("--headless");
-            chromeOptions.addArguments("--no-sandbox");
-            chromeOptions.addArguments("--disable-dev-shm-usage");
-            chromeOptions.addArguments("--disable-gpu");
-            chromeOptions.addArguments("--window-size=1920,1080");
-            driver = new ChromeDriver(chromeOptions);
+
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--headless");
+            options.addArguments("--no-sandbox");
+            options.addArguments("--disable-dev-shm-usage");
+            options.addArguments("--window-size=1920,1080");
+
+            driver.set(new ChromeDriver(options));
         }
         else if (browser.equalsIgnoreCase("firefox")) {
             WebDriverManager.firefoxdriver().setup();
-            FirefoxOptions firefoxOptions = new FirefoxOptions();
-            firefoxOptions.addArguments("--headless");
-            driver = new FirefoxDriver(firefoxOptions);
+
+            FirefoxOptions options = new FirefoxOptions();
+            options.addArguments("--headless");
+
+            driver.set(new FirefoxDriver(options));
         }
 
-        driver.manage().window().maximize();
+        driver.get().manage().window().maximize();
 
-        return driver;
+        return driver.get();
     }
 
     public static void quitDriver() {
-        WebDriver currentDriver;
-
-        if (driverInstanceExists) {
-            currentDriver = driverInstance;
-            currentDriver.quit();
+        if (driver.get() != null) {
+            driver.get().quit();
+            driver.remove();
         }
-
-        driverInstanceExists = false;
-        driverInstance = null;
     }
 }
