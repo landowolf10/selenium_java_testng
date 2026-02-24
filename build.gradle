@@ -54,8 +54,6 @@ tasks.register('allureReport', Exec) {
     group = "verification"
     description = "Genera el reporte de Allure"
 
-    dependsOn test
-
     doFirst {
         file("$buildDir/allure-results").mkdirs()
     }
