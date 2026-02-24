@@ -18,6 +18,8 @@ jobs:
 
       - name: Run tests and generate Allure report
         run: |
+          rm -rf ${{ github.workspace }}/build
+          mkdir -p ${{ github.workspace }}/build
           docker run --rm \
           -v ${{ github.workspace }}/build:/usr/src/app/build \
           -e TEST_RUNNER=all_tests \
