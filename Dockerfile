@@ -62,4 +62,4 @@ ARG GRID_HUB_HOST
 ENV SELENIUM_GRID_ENABLED=${SELENIUM_GRID_ENABLED}
 ENV GRID_HUB_HOST=${GRID_HUB_HOST}
 
-CMD ["sh", "-c", "./gradlew clean test -P${TEST_RUNNER}"]
+CMD ["sh", "-c", "Xvfb :99 -screen 0 1920x1080x24 & sleep 1 && ./gradlew clean test -P${TEST_RUNNER} --no-daemon"]
