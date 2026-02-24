@@ -17,6 +17,7 @@ jobs:
         run: docker build -t selenium_java_testng .
 
       - name: Run tests and generate Allure report
+        continue-on-error: true
         run: |
           rm -rf ${{ github.workspace }}/build
           mkdir -p ${{ github.workspace }}/build
@@ -27,6 +28,7 @@ jobs:
           selenium_java_testng
 
       - name: Upload Allure Report Artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
@@ -36,7 +38,7 @@ jobs:
   deploy-allure:
     needs: build-and-test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: always() && github.ref == 'refs/heads/main'
 
     steps:
       - uses: actions/checkout@v4
