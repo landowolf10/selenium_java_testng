@@ -11,14 +11,13 @@ RUN yum update -y && \
         p7zip p7zip-plugins && \
     yum clean all
 
-# Install Gradle
-RUN wget -q https://services.gradle.org/distributions/gradle-8.2-bin.zip -O gradle.zip && \
-    unzip -q gradle.zip && \
-    mv gradle-8.2 /opt/gradle && \
-    rm gradle.zip && \
-    ln -s /opt/gradle/bin/gradle /usr/bin/gradle
+# Install Gradle 8.2 y conservar el zip para el wrapper
+RUN wget -q https://services.gradle.org/distributions/gradle-8.2-bin.zip \
+        -O /opt/gradle-8.2-bin.zip && \
+    unzip -q /opt/gradle-8.2-bin.zip -d /opt/ && \
+    ln -s /opt/gradle-8.2/bin/gradle /usr/bin/gradle
 
-ENV GRADLE_HOME=/opt/gradle
+ENV GRADLE_HOME=/opt/gradle-8.2
 ENV PATH=$GRADLE_HOME/bin:$PATH
 ENV GRADLE_USER_HOME=/root/.gradle
 
@@ -55,11 +54,20 @@ COPY . .
 
 RUN chmod +x gradlew
 
+# Apuntar wrapper al zip local: evita descarga en runtime
+RUN sed -i 's|distributionUrl=.*|distributionUrl=file\:///opt/gradle-8.2-bin.zip|' \
+    gradle/wrapper/gradle-wrapper.properties
+
+# Pre-cachear dependencias en build time
+RUN gradle dependencies --no-daemon || true
+
 ARG TEST_RUNNER="all_tests"
 ARG SELENIUM_GRID_ENABLED="false"
 ARG GRID_HUB_HOST
 
+ENV TEST_RUNNER=${TEST_RUNNER}
 ENV SELENIUM_GRID_ENABLED=${SELENIUM_GRID_ENABLED}
 ENV GRID_HUB_HOST=${GRID_HUB_HOST}
+ENV DISPLAY=:99
 
-CMD ["sh", "-c", "Xvfb :99 -screen 0 1920x1080x24 & sleep 1 && ./gradlew clean test -P${TEST_RUNNER} --no-daemon"]
+CMD ["sh", "-c", "Xvfb :99 -screen 0 1920x1080x24 & sleep 1 && ./gradlew clean test -P${TEST_RUNNER} allureReport --no-daemon"]

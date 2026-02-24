@@ -20,9 +20,9 @@ jobs:
         run: |
           docker run --rm \
           -v ${{ github.workspace }}/build:/usr/src/app/build \
-          -w /usr/src/app \
-          selenium_java_testng \
-          ./gradlew test allureReport
+          -e TEST_RUNNER=all_tests \
+          -e SELENIUM_GRID_ENABLED=false \
+          selenium_java_testng
 
       - name: Upload Allure Report Artifact
         uses: actions/upload-artifact@v4
