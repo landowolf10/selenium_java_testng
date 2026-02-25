@@ -16,7 +16,7 @@ jobs:
       - name: Build Docker image
         run: docker build -t selenium_java_testng .
 
-      - name: Run tests and generate Allure report
+      - name: Run tests
         continue-on-error: true
         run: |
           rm -rf ${{ github.workspace }}/build
@@ -26,6 +26,13 @@ jobs:
           -e TEST_RUNNER=all_tests \
           -e SELENIUM_GRID_ENABLED=false \
           selenium_java_testng
+
+      - name: Generate Allure Report
+        if: always()
+        uses: simple-elf/allure-report-action@master
+        with:
+          allure_results: build/allure-results
+          allure_report: build/reports/allure-report
 
       - name: Upload Allure Report Artifact
         if: always()
