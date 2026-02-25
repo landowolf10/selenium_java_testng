@@ -36,6 +36,9 @@ dependencies {
 }
 
 test {
+    jvmArgs = ["-javaagent:${configurations.agent.singleFile}"]
+    systemProperty 'allure.results.directory', "${buildDir}/allure-results"
+
     useTestNG() {
         testLogging.showStandardStreams = true
         useDefaultListeners = true
