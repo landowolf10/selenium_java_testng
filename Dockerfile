@@ -70,4 +70,4 @@ ENV SELENIUM_GRID_ENABLED=${SELENIUM_GRID_ENABLED}
 ENV GRID_HUB_HOST=${GRID_HUB_HOST}
 ENV DISPLAY=:99
 
-CMD ["sh", "-c", "Xvfb :99 -screen 0 1920x1080x24 & sleep 1 && ./gradlew test -P${TEST_RUNNER} --no-daemon; ./gradlew allureReport --no-daemon"]
+CMD ["sh", "-c", "Xvfb :99 -screen 0 1920x1080x24 & sleep 1 && ./gradlew test -P${TEST_RUNNER} --no-daemon"]
