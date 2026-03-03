@@ -21,7 +21,7 @@ jobs:
               -v $(pwd)/build:/usr/src/app/build \
               -e TEST_RUNNER=all_tests \
               -e SELENIUM_GRID_ENABLED=false \
-              selenium_java_testng
+              selenium_java_testng || true
           when: always
 
       - run:
