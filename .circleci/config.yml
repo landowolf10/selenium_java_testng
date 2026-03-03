@@ -6,7 +6,7 @@ jobs:
       - checkout
       - run:
           name: Build Docker image
-          command: docker build -t restassured-tests .
+          command: docker build -t selenium_java_testng .
       - run:
           name: Run tests inside container
           command: |
