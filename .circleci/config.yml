@@ -22,7 +22,9 @@ jobs:
               -e TEST_RUNNER=all_tests \
               -e SELENIUM_GRID_ENABLED=false \
               selenium_java_testng || true
-          when: always
+
+            sudo chown -R circleci:circleci build
+        when: always
 
       - run:
           name: Install Allure
