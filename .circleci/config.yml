@@ -24,7 +24,7 @@ jobs:
               selenium_java_testng || true
 
             sudo chown -R circleci:circleci build
-        when: always
+          when: always
 
       - run:
           name: Install Allure
