@@ -1,20 +1,45 @@
 version: 2.1
+
 jobs:
-  build:
+  build-and-test:
     machine: true
+
     steps:
       - checkout
+
       - run:
           name: Build Docker image
           command: docker build -t selenium_java_testng .
+
       - run:
-          name: Run tests inside container
+          name: Run tests
           command: |
+            rm -rf build
+            mkdir -p build
+
             docker run --rm \
               -v $(pwd)/build:/usr/src/app/build \
               -e TEST_RUNNER=all_tests \
               -e SELENIUM_GRID_ENABLED=false \
               selenium_java_testng
+          when: always
+
+      - run:
+          name: Install Allure
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y default-jre
+            wget https://github.com/allure-framework/allure2/releases/latest/download/allure-2.27.0.tgz
+            tar -zxvf allure-2.27.0.tgz
+            sudo mv allure-2.27.0 /opt/allure
+            sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+
+      - run:
+          name: Generate Allure Report
+          command: |
+            allure generate build/allure-results -o build/reports/allure-report --clean
+          when: always
+
       - store_artifacts:
           path: build/reports/allure-report
           destination: allure-report
@@ -24,4 +49,4 @@ workflows:
   version: 2
   build-test:
     jobs:
-      - build
+      - build-and-test
