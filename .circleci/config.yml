@@ -27,11 +27,12 @@ jobs:
       - run:
           name: Install Allure
           command: |
+            ALLURE_VERSION=2.37.0
             sudo apt-get update
             sudo apt-get install -y default-jre
-            wget https://github.com/allure-framework/allure2/releases/latest/download/allure-2.27.0.tgz
-            tar -zxvf allure-2.27.0.tgz
-            sudo mv allure-2.27.0 /opt/allure
+            wget https://github.com/allure-framework/allure2/releases/download/${ALLURE_VERSION}/allure-${ALLURE_VERSION}.tgz
+            tar -zxvf allure-${ALLURE_VERSION}.tgz
+            sudo mv allure-${ALLURE_VERSION} /opt/allure
             sudo ln -s /opt/allure/bin/allure /usr/bin/allure
 
       - run:
